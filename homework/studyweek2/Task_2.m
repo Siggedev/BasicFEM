@@ -137,9 +137,6 @@ a_c = [T_1];
 K_ff = Ke(fdofs, fdofs);    K_fc = Ke(fdofs, cdofs);
 K_cf = Ke(cdofs, fdofs);    K_cc = Ke(cdofs, cdofs);
 
-% K = [K_ff, K_fc; K_cf, K_cc];
-
-
 fe(2) = fe(2) - q_n;
 
 f_f = fe(fdofs);
@@ -147,7 +144,7 @@ f_f = fe(fdofs);
 a_f = K_ff \ (f_f - K_fc * a_c);
 f_c = K_cf * a_f + K_cc * a_c
 
-% Plotting
+% Plot
 figure
 a = [a_c; a_f];
 
@@ -162,7 +159,7 @@ for i = 1:numel(xi)
 end
 
 plot(x, T);
-xlabel("\xi")
+xlabel("x")
 ylabel("Temperature")
 title("Distributed temperature")
 grid on
