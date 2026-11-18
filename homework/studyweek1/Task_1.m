@@ -1,8 +1,4 @@
 %% Paths
-% ==============================================
-% RUN THIS SECTION BEFORE RUNNING OTHER SECTIONS
-% ==============================================
-
 
 % Folder of this script
 here = fileparts(mfilename('fullpath'));
@@ -22,7 +18,7 @@ clc
 figure
 hold on
 
-xi = linspace(-1, 1, 101); % 101 => Even decimal number 
+xi = linspace(-1, 1, 101); % 101 => even decimal number 
 
 a_1 = [1, 0, 0]';
 a_2 = [0, 1, 0]';

@@ -92,8 +92,9 @@ K_cf = Ke(cdofs, fdofs);    K_cc = Ke(cdofs, cdofs);
 
 f_f = fe(fdofs);
 
-a_f = K_ff \ (f_f - K_fc * a_c);
+a_f = K_ff \ (f_f - K_fc * a_c)
 f_c = K_cf * a_f + K_cc * a_c
+
 
 % Plotting
 figure

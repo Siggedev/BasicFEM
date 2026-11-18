@@ -10,7 +10,12 @@ function N = bilinear_quadrilateral_reference_shape_values(xi)
     
     xi_1 = xi(1);
     xi_2 = xi(2);
+    
+    N_1 = (1 - xi_1)*(1 - xi_2);
+    N_2 = (1 + xi_1)*(1 - xi_2);
+    N_3 = (1 + xi_1)*(1 + xi_2);
+    N_4 = (1 - xi_1)*(1 + xi_2);
 
-    N = [ (1 - xi_1)*(1 - xi_2), (1 + xi_1)*(1 - xi_2), (1 + xi_1)*(1 + xi_2), (1 - xi_1)*(1 + xi_2)] / 4;
+    N = [ N_1, N_2, N_3, N_4] / 4;
 end
 

@@ -5,5 +5,31 @@ function [weights, points] = quadrilateral_quadrature(nquadpoints)
 % Input: nquadpoints [1x1] Number of quadrature points in each direction
 % Output: weights [1, nquadpoints^2] - quadrature weights
 %         points  [2, nquadpoints^2] - quadrature points
+    
+    % Quadrilateral rule:
+    % 1D Gauss rule applied in both directions (a tensor product)
+    
+    [w_1d, p_1d] = line_quadrature(nquadpoints);
+
+    n = nquadpoints^2;
+    
+    weights = zeros(1, n);
+    points  = zeros(2, n);
+    
+    q = 1;
+
+    for i = 1:nquadpoints
+
+        for j = 1:nquadpoints
+            
+            weights(q)   = w_1d(i) * w_1d(j);
+            points(:,q)  = [p_1d(i); p_1d(j)];
+
+            q = q + 1;
+        end     
+    
+    end
+
 end
+    
 

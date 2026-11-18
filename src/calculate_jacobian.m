@@ -18,16 +18,11 @@ function J = calculate_jacobian(dN_dxi, element_coordinates)
     nodes = size(element_coordinates, 2); % number of nodes (columns in element coordinates)
     
     dim = size(dN_dxi, 1); % number of rows in dN_dxi 
-    
-    % Return matrix. 
-    % Linear and quadratic line return 1x1 matrix
+
     J = zeros(dim, dim); 
 
     for i = 1:nodes
-        
-        % dN_dxi(:, i) calls gradients in column i'
-        % element_coordinates(:, i)' calls coordinates in column i
-        % ^ transposed in order for 
+
         J = J + element_coordinates(:, i) * dN_dxi(:, i)';
 
     end
