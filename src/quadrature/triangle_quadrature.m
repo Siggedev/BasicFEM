@@ -9,15 +9,14 @@ function [weights, points] = triangle_quadrature(nquadpoints)
     switch nquadpoints
         case 1
             weights = 1/2;
-            points = [1/3, 1/3];
-        case 2
+            points = [1/3; 1/3];
+        case 3
             weights = [1/6;
                        1/6;
                        1/6];
 
-            points  = [1/6, 1/6; 
-                       2/3, 1/6; 
-                       1/6, 2/3]
+            points  = [1/6, 2/3, 1/6;
+                       1/6, 1/6, 2/3];
         otherwise
             error("only 1 or 3 for nquadpoints has been implemented")
     end

@@ -9,6 +9,7 @@ function dNdxi = linear_triangle_reference_shape_gradients(xi)
         error("xi must be 2x1")
     end
 
-    dNdxi = [1; 0, 0; 1]
+    dNdxi = [1, 0, -1; 0, 1, -1];
     
 end
+    

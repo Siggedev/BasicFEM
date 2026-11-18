@@ -1,4 +1,4 @@
-function dNdxi = quadratic_line_reference_shape_gradients(xi)
+    function dNdxi = quadratic_line_reference_shape_gradients(xi)
 % dNdxi = quadratic_line_reference_shape_gradients(xi)
 % Calculate the shape function gradients for a quadratic line element. 
 % Input: xi [1x1] - local coordinate
