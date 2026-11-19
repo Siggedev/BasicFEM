@@ -34,6 +34,8 @@ function [Ke, fe] = linear_triangle_heat_element(D, b, coords, nquadpoints)
         B = J' \ dNdxi;
         
         Ke = Ke + B' * D * B * det(J) * w;
+
+        Ke = Ke + (dNdxi)
         
         fe = fe + N' * b * det(J) * w;
     end
