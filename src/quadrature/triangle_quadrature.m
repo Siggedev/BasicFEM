@@ -11,9 +11,7 @@ function [weights, points] = triangle_quadrature(nquadpoints)
             weights = 1/2;
             points = [1/3; 1/3];
         case 3
-            weights = [1/6,
-                       1/6,
-                       1/6];
+            weights = [1/6, 1/6, 1/6];
 
             points  = [1/6, 2/3, 1/6;
                        1/6, 1/6, 2/3];

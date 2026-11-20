@@ -21,23 +21,22 @@ function [Ke, fe] = bilinear_quadrilateral_heat_element(D, b, coords, nquadpoint
     Ke = zeros(4, 4);
     fe = zeros(4, 1);
 
-    for i = 1:nquadpoints
+    for i = 1:nquadpoints^2
         
-        xi = xi_q(i);
+        xi = xi_q(:, i);
         w = w_q(i);
 
         N = bilinear_quadrilateral_reference_shape_values(xi);
 
         dNdxi = bilinear_quadrilateral_reference_shape_gradients(xi);
         
-        J = 
+        J = calculate_jacobian(dNdxi, coords);
 
+        B = J' \ dNdxi;
 
-    
-    
+        Ke = Ke + B' * D * B * det(J) * w;
+
+        fe = fe + N' * b * det(J) * w;
+
     end
-
-
-
-
 end
