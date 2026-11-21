@@ -22,8 +22,8 @@ function [weights, points] = quadrilateral_quadrature(nquadpoints)
 
         for j = 1:nquadpoints
             
-            weights(q)   = w_1d(i) * w_1d(j);
-            points(:,q)  = [p_1d(i); p_1d(j)];
+            weights(q)   = w_1d(j) * w_1d(i);
+            points(:,q)  = [p_1d(j); p_1d(i)];
 
             q = q + 1;
         end     

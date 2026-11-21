@@ -54,10 +54,10 @@ for i = 1:length(testcases)
             failed = test_values(input, testdata{"q"}, q, "q", i, "bilinear_quadrilateral_heat_flux", "");
             num_failed = num_failed + failed;
             fe_nbc_truevals = testdata{"fe_nbc"};
-            for facetnr = 1:4
-                fe_nbc = bilinear_quadrilateral_heat_neumann(qn, coords, facetnr, nqp_nbc);
-                fe_nbc_true = fe_nbc_truevals{facetnr};
-                failed = test_values(input, fe_nbc_true, fe_nbc, "fe_nbc", i, "bilinear_quadrilateral_heat_neumann", sprintf("Facet %u", facetnr));
+            for facet_nr = 1:4
+                fe_nbc = bilinear_quadrilateral_heat_neumann(qn, coords, facet_nr, nqp_nbc);
+                fe_nbc_true = fe_nbc_truevals{facet_nr};
+                failed = test_values(input, fe_nbc_true, fe_nbc, "fe_nbc", i, "bilinear_quadrilateral_heat_neumann", sprintf("Facet %u", facet_nr));
                 num_failed = num_failed + failed;
             end
         case "LinearTriangle"
@@ -70,10 +70,10 @@ for i = 1:length(testcases)
             failed = test_values(input, testdata{"q"}, q, "q", i, "linear_triangle_heat_flux", "");
             num_failed = num_failed + failed;
             fe_nbc_truevals = testdata{"fe_nbc"};
-            for facetnr = 1:3
-                fe_nbc = linear_triangle_heat_neumann(qn, coords, facetnr, nqp_nbc);
-                fe_nbc_true = fe_nbc_truevals{facetnr};
-                failed = test_values(input, fe_nbc_true, fe_nbc, "fe_nbc", i, "linear_triangle_heat_neumann", sprintf("Facet %u", facetnr));
+            for facet_nr = 1:3
+                fe_nbc = linear_triangle_heat_neumann(qn, coords, facet_nr, nqp_nbc);
+                fe_nbc_true = fe_nbc_truevals{facet_nr};
+                failed = test_values(input, fe_nbc_true, fe_nbc, "fe_nbc", i, "linear_triangle_heat_neumann", sprintf("Facet %u", facet_nr));
                 num_failed = num_failed + failed;
             end
         otherwise
