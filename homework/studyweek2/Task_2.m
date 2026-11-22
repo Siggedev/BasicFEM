@@ -74,7 +74,6 @@ b = 10e3; % heat source
 x_alpha = [0, 0.1, 0.05];
 nquadpoints = 2;
 
-
 % 3)
 [Ke, fe] = quadratic_line_heat_element(k, b, x_alpha, nquadpoints);
 

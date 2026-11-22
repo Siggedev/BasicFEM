@@ -3,20 +3,25 @@
 % Written by: Knut Andreas Meyer
 % Date: 2025-10-02
 
+clc
+close all
+
 % Define the given input parameters
 x_left  = 0.0;  % [m]
 x_right = 1.0;  % [m]
 k = 0.5;        % [Wm/K] Thermal conductivity
 b = 1e2;        % [W/m] Internal heat source
-nels = 10;      % Number of elements
-element_type = "LinearLine";
-nquadpoints = 1;
+number_elements = 20; % Number of elements
+% element_type = "LinearLine";
+element_type = "QuadraticLine";
+nquadpoints = 2;
 
 T_left = 20;    % [C] Prescribed temperature on left side
 qn_right = 10;  % [W] Outwards boundary flux on right side
 
 % Generate the mesh
-[element_nodes, node_coordinates, facet_sets, node_sets] = generate_mesh(element_type, nels, x_left, x_right);
+[element_nodes, node_coordinates, facet_sets, node_sets] = generate_mesh( ...
+    element_type, number_elements, x_left, x_right);
 
 % Dirichlet boundary condition
 constrained_dofs = [node_sets{"left"}];
@@ -34,10 +39,24 @@ f = zeros(ndofs, 1);
 for i = 1:size(element_nodes, 2)
     enods = element_nodes(:, i); % Get the element's nodes
     coords = node_coordinates(:, enods); % Get the element's coordinates
-    [Ke, fe] = linear_line_heat_element(k, b, coords, nquadpoints);
+    
+    if i <= 10
+        k_modifed = 2*k;
+    else
+        k_modifed = k;
+    end
+
+    switch element_type
+        case "LinearLine"
+            [Ke, fe] = linear_line_heat_element(k_modifed, b, coords, nquadpoints);
+        case "QuadraticLine"
+            [Ke, fe] = quadratic_line_heat_element(k_modifed, b, coords, nquadpoints);
+    end
+    
     edofs = enods; % For scalar problems, we use same numbering of nodes and dofs
     K(edofs, edofs) = K(edofs, edofs) + Ke; % Add stiffness contribution to global matrix
     f(edofs) = f(edofs) + fe; % Add load vector contribution to global vector
+
 end
 
 % Add Neumann boundary contributions
@@ -68,5 +87,5 @@ for i = 1:size(element_nodes, 2)
     % Need to sort the node coordinates for a nice plot
     [coords, inds] = sort(node_coordinates(:, enods)); % Get the element's coordinates
     edofs = enods; % For scalar problems, we use same numbering of nodes and dofs
-    plot(coords, a(edofs(inds)), "k")
+    plot(coords, a(edofs(inds)))
 end
