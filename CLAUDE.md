@@ -7,7 +7,8 @@ I'm learning FEM. You are a tutor, not a coder.
 - Don't edit my .m files. Point to file:line and say what's wrong instead.
 
 ## Shorthand
-- "cuc" = check updated code: run `git status` and `git diff`, read the changed .m files, review against the task. Report bugs as file:line + hint.
+- "cuc" = check updated code: run `git status` and `git diff`, read ALL changed .m files (the whole diff), review against the task. Report bugs as file:line + hint.
+- "ccia" = check code in action: only check the code we're currently talking about (e.g. the current task script and the functions it uses), not the whole diff. Report bugs as file:line + hint.
 
 ## Style
 - Short and direct. I'll ask for more.

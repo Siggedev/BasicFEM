@@ -1,38 +1,68 @@
-
-path = genpath("src");
-addpath(path)
-
-%%
+%% LinearLine
 clc
+close all
 
-x1 = 1; x2 = 1.5; x3 = 2;
-e = 1;
+fprintf("========================================================\n")
+fprintf("======== LinearLine ========\n")
+fprintf("========================================================\n")
+[element_nodes, node_coordinates, facet_sets, node_sets] = generate_mesh( ...
+    'LinearLine', 2, 0.5, 2)
 
-node_coordinates = [x1, x2, x3];
+fprintf("======== facet_sets ========")
+facet_left = facet_sets{'left'}
+facet_left = facet_sets{'right'}
 
-e1_nodes = [1; 2]
-e2_nodes = [2; 3]
-element_nodes = [e1_nodes, e2_nodes]
+%% QuadraticLine
+clc
+close all
+fprintf("========================================================\n")
+fprintf("======== QuadraticLine ========\n")
+fprintf("========================================================\n")
 
-enods = element_nodes(:, e)
-ecoords = node_coordinates(:, enods)
+[element_nodes, node_coordinates, facet_sets, node_sets] = generate_mesh( ...
+    'QuadraticLine', 2, 0.5, 2)
 
+fprintf("======== facet_sets ========")
+facet_left = facet_sets{'left'}
+facet_left = facet_sets{'right'}
+%% LinearTriangle
+clc
+close all
+fprintf("========================================================\n")
+fprintf("======== LinearTriangle ========\n")
+fprintf("========================================================\n")
 
-%% 
+[element_nodes, node_coordinates, facet_sets, node_sets] = generate_mesh( ...
+    'LinearTriangle', [5; 5])
 
-nel = size(element_nodes, 2);        % Number of elements
-ndofs = size(node_coordinates, 2);   % Number of nodes
-K = spalloc(ndofs, ndofs, 3 * ndofs);% Allocate global matrix
-f = zeros(ndofs, 1);				 % Allocate global vector
+[ex, ey] = get_element_coordinates(element_nodes, node_coordinates, 'LinearTriangle');
+fill(ex, ey, 'w')
+axis equal;
+plot_fe_mesh(element_nodes, node_coordinates, "LinearTriangle")
 
-for e = 1:nel
-    enods = element_nodes(:, e);     % Extract node numbers for given element
-    ecoords = node_coordinates(:, enods); % Extract node coordinates for elem
-    % Calculate the local matrix and vector for the given element:
-    [Ke, fe] = linear_line_heat_element(k, b, ecoords, nquadpoints);
-    % Add the local contributions to the right locations in the global 
-    % matrix and vector:
-    edofs = enods;
-    K(edofs, edofs) = K(edofs, edofs) + Ke;
-    f(edofs) = f(edofs) + fe;
-end
+%% Bilinear Quadrilateral
+clc
+close all
+[element_nodes, node_coordinates, facet_sets, node_sets] = generate_mesh( ...
+    'BilinearQuadrilateral', [5,5])
+[ex, ey] = get_element_coordinates(element_nodes, node_coordinates, 'BilinearQuadrilateral');
+fill(ex, ey, 'w')
+axis equal;
+plot_fe_mesh(element_nodes, node_coordinates, "BilinearQuadrilateral")
+
+%% Read meshes
+clc
+close all
+
+[element_nodes, node_coordinates, element_sets, facet_sets, node_sets, element_type]= read_mesh("C:\Users\arvid\OneDrive\Dokument\BasicFEM\homework\studyweek3\hw3_testmesh_LinearTriangle.inp");
+[ex, ey] = get_element_coordinates(element_nodes, node_coordinates, 'LinearTriangle')
+
+% axis equal;
+% fill(ex, ey, 'w') 
+% fig = plot_fe_mesh(element_nodes, node_coordinates, 'LinearTriangle');
+
+el_data = zeros(size(element_nodes, 2), 1);
+el_data(element_sets{'floorpanel'}) = 1;
+fill(ex, ey, el_data)
+axis equal;
+colorbar();
