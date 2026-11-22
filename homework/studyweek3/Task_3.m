@@ -54,8 +54,10 @@ plot_fe_mesh(element_nodes, node_coordinates, "BilinearQuadrilateral")
 clc
 close all
 
-[element_nodes, node_coordinates, element_sets, facet_sets, node_sets, element_type]= read_mesh("C:\Users\arvid\OneDrive\Dokument\BasicFEM\homework\studyweek3\hw3_testmesh_LinearTriangle.inp");
-[ex, ey] = get_element_coordinates(element_nodes, node_coordinates, 'LinearTriangle')
+hw3_testmesh_LinearTriangle_path = fullfile("homework", "studyweek3/hw3_testmesh_LinearTriangle.inp");
+
+[element_nodes, node_coordinates, element_sets, facet_sets, node_sets, element_type]= read_mesh(hw3_testmesh_LinearTriangle_path);
+[ex, ey] = get_element_coordinates(element_nodes, node_coordinates, 'LinearTriangle');
 
 % axis equal;
 % fill(ex, ey, 'w') 
