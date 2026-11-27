@@ -203,12 +203,16 @@ clc
 
 % a)
 element_floortiles = facet_sets{"tilesurface"};
-q_floortiles = q(:,element_floortiles);
+q_floortiles = q(:,element_floortiles(1,:));
+facet_nr_floortiles = element_floortiles(2,:);
+
+for i = 1:
 
 switch element_type
     case "LinearTriangle"
         calculate_jacobian()
-        normal = quadrilateral_facet_weighted_normal()
+        q(:,i) = linear_triangle_heat_flux(D, coords, ae(:,i), 1);
+        triangle_facet_weighted_normal()
     case "BilinearQuadrilateral"
         q(:,i) = bilinear_quadrilateral_heat_flux(D, coords, ae(:,i), 1);
     otherwise
@@ -217,17 +221,8 @@ end
 
 
 %%
-total_flux_into_room = sum(q_floortiles(2,:));
-fprintf("Total flux into the room from the floor: %.1f W/m2\n", total_flux_into_room)
 
-% b)
-dofs_wallstructure = node_sets{"wallstructure"};
-q_wallstructure = q(:,dofs_wallstructure);
-total_flux_into_wall = sum(q_wallstructure(2,:));
-fprintf("Total flux into the wall from the room: %.1f W/m2\n", total_flux_into_wall)
 
-%c)
-dofs_outsurface = node_sets{"outsurface"};
-q_outsurface = q(:,dofs_outsurface);
-total_flux_out = sum(q_outsurface(2,:));
-fprintf("Total flux from the wall out into outside: %.1f W/m2\n", total_flux_out)
+%fprintf("Total flux into the room from the floor: %.1f W/m2\n", total_flux_into_room)
+%fprintf("Total flux into the wall from the room: %.1f W/m2\n", total_flux_into_wall)
+%fprintf("Total flux from the wall out into outside: %.1f W/m2\n", total_flux_out)
