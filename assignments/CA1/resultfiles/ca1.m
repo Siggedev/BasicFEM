@@ -1,7 +1,13 @@
 % VSM167
 % Computer Assignment 1
 % Written by: Arvid & Linda
+
+% Add src
+addpath(genpath("src"))
+
+%% Solve FE problem and plot temperature distribution
 clc
+close all
 
 % Dimensions
 
@@ -24,7 +30,6 @@ T_room = 20; % [C] Room temperature
 T_out = -10; % [C] Outside temperature
 Q_h = 200; % [W/m] Heat source
 q_2 = - Q_h / (2*r*pi); % [W/m2] Heat flux in q_2
-nquadpoints = 2; 
 
 % Heat conductivity 
 k_floor_tiles = 1.0;     % [W/mC]
@@ -43,6 +48,13 @@ facet_sets,         ... % Groups of edges, as element–facet pairs (boundary pi
 node_sets,          ... % Groups of nodes (boundary points)
 element_type        ... 
 ] = read_mesh(floormesh_quad_path);
+
+switch element_type
+    case "LinearTriangle"
+        nquadpoints = 1;
+    case "BilinearQuadrilateral"
+        nquadpoints = 2;
+end
 
 
 ndofs = size(node_coordinates, 2);
@@ -68,7 +80,7 @@ for i = 1:number_elements
     % Conductivity matrix
     k = k_el(i);
     if k == 0
-        error('conductivity cant be zero')
+        error("conductivity cant be zero")
     end
     D = k * eye(2);
     
@@ -79,7 +91,7 @@ for i = 1:number_elements
         case "BilinearQuadrilateral"
             [Ke, fe] = bilinear_quadrilateral_heat_element(D, 0, coords, nquadpoints);
         otherwise
-            error("FUCK YOU")
+            error("bruh you dumb a shiieet")
     end
 
     edofs = element_node_ids;                   % For scalar problems, we use same numbering of nodes and dofs
@@ -94,10 +106,10 @@ dofs_outside = node_sets{"outsurface"};
 constrained_dofs = union(dofs_roomside, dofs_outside);
 
 % Neumann boundaries
-neumann_dofs = node_sets{"hole"}
+neumann_dofs = node_sets{"hole"};
 
 % Solve the equation system via partitioning
-cdofs = constrained_dofs % Dofs with known temperature, so constrain them!
+cdofs = constrained_dofs; % Dofs with known temperature, so constrain them!
 
 a(dofs_roomside) = T_room;
 a(dofs_outside)  = T_out;
@@ -120,21 +132,102 @@ for i = 1:size(hole_facets, 2)
         case "BilinearQuadrilateral"
             f_neumann(enods) = f_neumann(enods) + bilinear_quadrilateral_heat_neumann(q_2, coords, facet_nr, nquadpoints);
         otherwise
-            error("FUCK YOU")
+            error("bruh you dumb a shiieet")
     end
 
 
 end
 
-% 
 % f(neumann_dofs) = q_2;
 f = f + f_neumann;
 fdofs = setdiff(1:ndofs, cdofs);    % The rest are unknown -> free to change
 
 % Solve for the unknown dofs: af = Kff^{-1} * (ff - Kfc * ac)
-af = K(fdofs, fdofs) \ (f(fdofs) - K(fdofs, cdofs) * a(constrained_dofs))
+af = K(fdofs, fdofs) \ (f(fdofs) - K(fdofs, cdofs) * a(cdofs));
 
-% Re-create the full solution vector
-a = zeros(ndofs, 1);
 a(fdofs) = af;
-a(cdofs) = a(constrained_dofs);
+
+figure()
+hold on
+ae = get_element_dofs(element_nodes, a, 1);
+[ex, ey] = get_element_coordinates(element_nodes, node_coordinates, element_type);
+fill(ex, ey, ae);
+axis equal;
+colorbar
+
+% ==========================================================
+% calculate and plot heat flux in the center of each element
+% ==========================================================
+
+% Heat flux matrix
+q = zeros(2, number_elements);
+
+for i = 1:number_elements
+
+    element_node_ids = element_nodes(:, i);          % Element node ids
+    coords = node_coordinates(:, element_node_ids);  % Element node coordinates
+    
+    % Conductivity matrix
+    k = k_el(i);
+    if k == 0
+        error("conductivity cant be zero")
+    end
+    D = k * eye(2);
+
+    
+    switch element_type
+        case "LinearTriangle"
+            q(:,i) = linear_triangle_heat_flux(D, coords, ae(:,i), 1);
+        case "BilinearQuadrilateral"
+            q(:,i) = bilinear_quadrilateral_heat_flux(D, coords, ae(:,i), 1);
+        otherwise
+            error("bruh you dumb a shiieet")
+    end
+end
+
+[ex, ey] = get_element_coordinates(element_nodes, node_coordinates, element_type);
+
+X = mean(ex);
+Y = mean(ey);
+U = q(1,:);
+V = q(2,:);
+
+quiver(X, Y, U, V, 'r', AutoScaleFactor=1.1)
+hold off
+
+%%
+clc
+% =============================================
+% Total heat flux 
+% =============================================
+
+% a)
+element_floortiles = facet_sets{"tilesurface"};
+q_floortiles = q(:,element_floortiles);
+
+switch element_type
+    case "LinearTriangle"
+        calculate_jacobian()
+        normal = quadrilateral_facet_weighted_normal()
+    case "BilinearQuadrilateral"
+        q(:,i) = bilinear_quadrilateral_heat_flux(D, coords, ae(:,i), 1);
+    otherwise
+        error("bruh you dumb a shiieet")
+end
+
+
+%%
+total_flux_into_room = sum(q_floortiles(2,:));
+fprintf("Total flux into the room from the floor: %.1f W/m2\n", total_flux_into_room)
+
+% b)
+dofs_wallstructure = node_sets{"wallstructure"};
+q_wallstructure = q(:,dofs_wallstructure);
+total_flux_into_wall = sum(q_wallstructure(2,:));
+fprintf("Total flux into the wall from the room: %.1f W/m2\n", total_flux_into_wall)
+
+%c)
+dofs_outsurface = node_sets{"outsurface"};
+q_outsurface = q(:,dofs_outsurface);
+total_flux_out = sum(q_outsurface(2,:));
+fprintf("Total flux from the wall out into outside: %.1f W/m2\n", total_flux_out)
