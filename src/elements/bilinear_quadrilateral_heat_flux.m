@@ -18,7 +18,7 @@ function q = bilinear_quadrilateral_heat_flux(D, coords, ae, nquadpoints)
     
         J = calculate_jacobian(dN_dxi, coords);
     
-        q(:, i ) = - D * (J' \ dN_dxi) * ae;
+        q(:, i) = - D * (J' \ dN_dxi) * ae;
     
     end
 end

@@ -4,6 +4,7 @@
 
 % Add src
 addpath(genpath("src"))
+addpath(genpath("assignments\CA1"))
 
 %% Solve FE problem and plot temperature distribution
 clc
@@ -47,7 +48,7 @@ element_sets,       ... % Groups of elements (regions)
 facet_sets,         ... % Groups of edges, as element–facet pairs (boundary pieces)
 node_sets,          ... % Groups of nodes (boundary points)
 element_type        ... 
-] = read_mesh(floormesh_quad_path);
+] = read_mesh(floormesh_tria_path);
 
 switch element_type
     case "LinearTriangle"
@@ -147,6 +148,7 @@ af = K(fdofs, fdofs) \ (f(fdofs) - K(fdofs, cdofs) * a(cdofs));
 
 a(fdofs) = af;
 
+%% PLOT TEMPERATURE DISTRUBUTION
 figure()
 hold on
 ae = get_element_dofs(element_nodes, a, 1);
@@ -154,6 +156,7 @@ ae = get_element_dofs(element_nodes, a, 1);
 fill(ex, ey, ae);
 axis equal;
 colorbar
+%% 
 
 % ==========================================================
 % calculate and plot heat flux in the center of each element
@@ -192,37 +195,25 @@ Y = mean(ey);
 U = q(1,:);
 V = q(2,:);
 
+%% PLOT FLUX IN EACH ELEMENT
 quiver(X, Y, U, V, 'r', AutoScaleFactor=1.1)
 hold off
 
 %%
 clc
-% =============================================
-% Total heat flux 
-% =============================================
 
-% a)
-element_floortiles = facet_sets{"tilesurface"};
-q_floortiles = q(:,element_floortiles(1,:));
-facet_nr_floortiles = element_floortiles(2,:);
+Q_tilesurface = calculate_total_heat_flux( ...
+facet_sets, ...
+element_nodes, ...
+element_type, ...
+node_coordinates, ...
+nquadpoints, ...
+q, ...
+"tilesurface" );
 
-for i = 1:
-
-switch element_type
-    case "LinearTriangle"
-        calculate_jacobian()
-        q(:,i) = linear_triangle_heat_flux(D, coords, ae(:,i), 1);
-        triangle_facet_weighted_normal()
-    case "BilinearQuadrilateral"
-        q(:,i) = bilinear_quadrilateral_heat_flux(D, coords, ae(:,i), 1);
-    otherwise
-        error("bruh you dumb a shiieet")
-end
+fprintf()
 
 
-%%
 
 
-%fprintf("Total flux into the room from the floor: %.1f W/m2\n", total_flux_into_room)
-%fprintf("Total flux into the wall from the room: %.1f W/m2\n", total_flux_into_wall)
-%fprintf("Total flux from the wall out into outside: %.1f W/m2\n", total_flux_out)
+
